@@ -1,23 +1,73 @@
-# Prog4_Magni
+# React + TypeScript + Vite
 
-Repositorio para alojar los trabajos prácticos de la materia Programación IV (Comisión PROG1, Segundo año).
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-**Alumno:** Cristian Krahulik
+Currently, two official plugins are available:
 
-## Estructura del Repositorio
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-Para mantener el código organizado y facilitar la corrección, cada trabajo práctico se desarrolla y entrega en una rama (*branch*) independiente. 
+## React Compiler
 
-Para visualizar un trabajo específico, por favor seleccione la rama correspondiente en GitHub o utilice la terminal:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- `tp1`: Trabajo Práctico 1.
-- `tp-registro-eventos`: Trabajo Práctico - Registro de Eventos (React).
+## Expanding the ESLint configuration
 
-## Ejecución Local
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-Para probar los proyectos (basados en Node/React), ubíquese en la rama del trabajo a evaluar y ejecute:
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-```bash
-git checkout <nombre-de-la-rama>
-npm install
-npm run dev
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```

@@ -1,0 +1,31 @@
+Información del Proyecto
+
+    Trabajo Práctico: Trabajo Practico N° 2 - Programación 4.
+
+    Tema: Sistema de Registro de Eventos Tecnológicos.
+
+    Tecnologías base: React, Vite y TailwindCSS.
+
+    Lenguaje: TypeScript.
+
+✅ Lo que ya hiciste (Completado)
+
+    Creación del proyecto: Ejecutaste el comando npm create vite@latest registro-eventos.
+
+    Selección de entorno: Elegiste correctamente el framework React y la variante TypeScript.
+
+    Instalación base: Ingresaste a la carpeta del proyecto (cd registro-eventos) e instalaste las dependencias iniciales de Node (npm install).
+
+    Descarga de Tailwind: Descargaste correctamente la versión exacta que pide la cátedra ejecutando npm install -D tailwindcss@3 postcss autoprefixer.
+
+⏳ Lo que tenés que hacer AHORA (Configuración de Tailwind)
+
+Estas son las tareas pendientes inmediatas para dejar Tailwind funcionando, que es el paso en el que te frenaste:
+
+    Generar archivos de configuración: Tenés que inicializar Tailwind para que te cree los archivos tailwind.config.js y postcss.config.js en la raíz de tu proyecto.
+
+    Configurar las rutas (Content): Vas a tener que abrir el tailwind.config.js y decirle a Tailwind en qué archivos de tu proyecto tiene que buscar las clases CSS (modificando la sección content).
+
+    Limpiar el CSS por defecto: Tenés que abrir el archivo src/index.css y borrar todo el código enorme que te generó Vite por defecto.
+
+    Inyectar Tailwind: En ese mismo archivo src/index.css que dejaste vacío, tenés que pegar las tres directivas que pide el PDF: @tailwind base;, @tailwind components; y @tailwind utilities;.
