@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Iniciar Sesión</h1>
+            
+            <div id="alert-message" class="alert"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clave" class="form-label">Contraseña</label>
+                    <input type="password" id="clave" name="clave" class="form-control" autocomplete="current-password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="btn-ingresar">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Importamos el api -->
+    <script src="js/api.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

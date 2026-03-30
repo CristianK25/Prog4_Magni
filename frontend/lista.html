@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios - Gestión</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1 class="header-title">Lista de Usuarios</h1>
+            <a href="login.html" class="btn btn-primary" style="width: auto;">Cerrar Sesión</a>
+        </div>
+
+        <div id="alert-message" class="alert" style="margin-bottom: 20px;"></div>
+
+        <div class="toolbar">
+            <input type="text" id="buscador" class="form-control search-input" placeholder="Buscar usuario..." aria-label="Buscar usuario">
+            <button id="btn-buscar" class="btn btn-primary" style="width: auto;">Buscar</button>
+        </div>
+
+        <div class="table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Usuario</th>
+                        <th>Bloqueado</th>
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th style="text-align: center;">Bloquear</th>
+                        <th style="text-align: center;">Desbloquear</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <!-- Los usuarios se cargarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No se encontraron usuarios</h3>
+            <p>Prueba con otro término de búsqueda o limpia el filtro.</p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/lista.js"></script>
+</body>
+</html>
