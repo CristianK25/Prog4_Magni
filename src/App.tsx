@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Header from "./components/Header";
 import Formulario from "./components/Formulario";
 import Busqueda from "./components/Busqueda";
-import ListaParticipantes from "./components/ListaParticipantes";
+import TarjetaParticipantes from "./components/TarjetaParticipante";
 import type Participante from "./models/Participante";
 
 const LLAVE_PARTICIPANTE = "participantes";
@@ -41,6 +41,26 @@ function App() {
     localStorage.setItem(LLAVE_PARTICIPANTE, JSON.stringify(nuevaLista));
   };
 
+  // -- LÓGICA DE LA LISTA SEPARADA CON IF/ELSE --
+  let contenidoLista;
+
+  if (participantes.length === 0) {
+    contenidoLista = <div className="col-span-3 text-center">No hay participantes aun</div>;
+  } else {
+    contenidoLista = participantes.map((persona) => (
+      <TarjetaParticipantes
+        key={persona.id}
+        id={persona.id}
+        nombre={persona.nombre}
+        pais={persona.pais}
+        modalidad={persona.modalidad}
+        nivel={persona.nivel}
+        tecnologias={persona.tecnologias}
+        onEliminar={eliminarParticipante}
+      />
+    ));
+  }
+
   return (
     <div className="flex flex-col gap-2 h-screen items-center justify-start bg-white pb-20">
       <Header />
@@ -49,10 +69,9 @@ function App() {
 
       <Busqueda />
 
-      <ListaParticipantes
-        onEliminar={eliminarParticipante}
-        participantes={participantes}
-      />
+      <div className="grid grid-cols-3 gap-4 min-h-64 mt-4 max-w-4xl mx-auto w-full px-8">
+        {contenidoLista}
+      </div>
     </div>
   );
 }
