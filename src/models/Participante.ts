@@ -5,6 +5,7 @@ export default interface Participante {
   edad: number;
   pais: string;
   tecnologias: string[];
+  modalidad: string;
   nivel: string;
   aceptaTerminos: boolean;
 }

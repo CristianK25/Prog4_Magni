@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type Participante from "../models/Participante";
 
-const STORAGE_KEY = "participantes";
+/**Le hago saber como funciona el prop que viene de app */
+interface FormularioProps {
+  onAgregar: (nuevoParticipante: Participante) => void;
+}
 
-export default function Formulario() {
+export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALTABAN LAS LLAVES
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -15,94 +18,14 @@ export default function Formulario() {
     aceptaTerminos: false,
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const target = e.currentTarget;
-    const { name, value, type } = target;
-
-    if (type === "checkbox") {
-      const inputElement = target as HTMLInputElement;
-      if (name === "aceptaTerminos") {
-        setFormData((prev) => ({
-          ...prev,
-          aceptaTerminos: inputElement.checked,
-        }));
-      } else if (name === "tecnologias") {
-        setFormData((prev) => {
-          const tecnosCopy = [...prev.tecnologias];
-          if (inputElement.checked) {
-            tecnosCopy.push(value);
-          } else {
-            tecnosCopy.splice(tecnosCopy.indexOf(value), 1);
-          }
-          return { ...prev, tecnologias: tecnosCopy };
-        });
-      }
-    } else if (type === "radio") {
-      setFormData((prev) => ({
-        ...prev,
-        modalidad: value,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+  // CASCARONES VACIOS PARA QUE NO TIRE ERROR EL HTML
+  const handleChange = (e: any) => {
+    // Acá vamos a armar el código nuevo después
   };
 
-  const handleRegistrar = (e: React.FormEvent) => {
+  const handleRegistrar = (e: any) => {
     e.preventDefault();
-
-    // Validaciones básicas
-    if (
-      !formData.nombre ||
-      !formData.email ||
-      !formData.edad ||
-      !formData.modalidad ||
-      formData.tecnologias.length === 0 ||
-      !formData.aceptaTerminos
-    ) {
-      alert("Por favor, completa todos los campos requeridos");
-      return;
-    }
-
-    // Obtener participantes existentes
-    const participantesGuardados = localStorage.getItem(STORAGE_KEY);
-    const participantes: Participante[] = participantesGuardados
-      ? JSON.parse(participantesGuardados)
-      : [];
-
-    // Crear nuevo participante
-    const nuevoParticipante: Participante = {
-      id: Date.now(),
-      nombre: formData.nombre,
-      email: formData.email,
-      edad: parseInt(formData.edad),
-      pais: formData.pais,
-      tecnologias: formData.tecnologias,
-      nivel: formData.nivel,
-      aceptaTerminos: formData.aceptaTerminos,
-    };
-
-    // Agregar y guardar
-    participantes.push(nuevoParticipante);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(participantes));
-
-    // Limpiar formulario
-    setFormData({
-      nombre: "",
-      email: "",
-      edad: "",
-      pais: "Argentina",
-      modalidad: "",
-      tecnologias: [],
-      nivel: "principiante",
-      aceptaTerminos: false,
-    });
-
-    alert("¡Participante registrado exitosamente!");
+    // Acá vamos a armar el código nuevo después
   };
 
   return (
