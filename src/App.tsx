@@ -12,6 +12,12 @@ function App() {
   /*El estado de los participantes empieza sin nada*/
   const [participantes, setParticipantes] = useState<Participante[]>([]);
 
+  const [filtros, setFiltros] = useState({
+    texto: "",
+    modalidad: "",
+    nivel: "",
+  });
+
   /*Funcion que nose que hace */
   useEffect(() => {
     const participantesGuardados = localStorage.getItem(LLAVE_PARTICIPANTE);
@@ -41,13 +47,40 @@ function App() {
     localStorage.setItem(LLAVE_PARTICIPANTE, JSON.stringify(nuevaLista));
   };
 
+  // -- LÓGICA DEL EMBUDO MÁGICO (FILTROS) --
+  const listaFiltrada = participantes.filter((persona) => {
+    // 1. Filtro de Texto (si está vacío, pasa. Si tiene algo, se fija si el nombre lo incluye en minúsculas)
+    const coincideTexto =
+      filtros.texto === "" ||
+      persona.nombre.toLowerCase().includes(filtros.texto.toLowerCase());
+
+    // 2. Filtro de Modalidad
+    const coincideModalidad =
+      filtros.modalidad === "" || persona.modalidad === filtros.modalidad;
+
+    // 3. Filtro de Nivel
+    const coincideNivel =
+      filtros.nivel === "" || persona.nivel === filtros.nivel;
+
+    // Solo pasan los que cumplan las 3 condiciones a la vez
+    return coincideTexto && coincideModalidad && coincideNivel;
+  });
+
   // -- LÓGICA DE LA LISTA SEPARADA CON IF/ELSE --
   let contenidoLista;
 
   if (participantes.length === 0) {
-    contenidoLista = <div className="col-span-3 text-center">No hay participantes aun</div>;
+    contenidoLista = (
+      <div className="col-span-3 text-center text-gray-500 font-medium">No hay participantes aún. ¡Agregá el primero!</div>
+    );
+  } else if (listaFiltrada.length === 0) {
+    // Escenario extra: ¡Tienen datos pero apretaron tantos filtros que no hay coincidencias!
+    contenidoLista = (
+      <div className="col-span-3 text-center text-gray-500 font-medium">No se encontraron resultados para esos filtros.</div>
+    );
   } else {
-    contenidoLista = participantes.map((persona) => (
+    // Acá mapeamos el EMBUDO (listaFiltrada), ya no mapeamos el tanque entero (participantes)
+    contenidoLista = listaFiltrada.map((persona) => (
       <TarjetaParticipantes
         key={persona.id}
         id={persona.id}
@@ -67,7 +100,7 @@ function App() {
 
       <Formulario onAgregar={agregarParticipante} />
 
-      <Busqueda />
+      <Busqueda filtros={filtros} onFiltrar={setFiltros} />
 
       <div className="grid grid-cols-3 gap-4 min-h-64 mt-4 max-w-4xl mx-auto w-full px-8">
         {contenidoLista}
