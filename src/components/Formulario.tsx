@@ -6,7 +6,8 @@ interface FormularioProps {
   onAgregar: (nuevoParticipante: Participante) => void;
 }
 
-export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALTABAN LAS LLAVES
+export default function Formulario({ onAgregar }: FormularioProps) {
+  // El estado donde tenemos el borrador de nuestro formulario
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
@@ -18,15 +19,75 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
     aceptaTerminos: false,
   });
 
-  // CASCARONES VACIOS PARA QUE NO TIRE ERROR EL HTML
-  const handleChange = (e: any) => {
-    // Acá vamos a armar el código nuevo después
+  // =============== FUNCIONES ESPECÍFICAS Y CLARAS ===============
+
+  // Esta funcion SOLO se encarga de entender los checkboxes de las tecnologías
+  // Si le pasas "react" y "true", lo suma a la bolsa. Si le pasas "react" y "false", lo saca.
+  const manejarTecnologias = (tecnologia: string, estaChequeado: boolean) => {
+    if (estaChequeado) {
+      setFormData({
+        ...formData,
+        tecnologias: [...formData.tecnologias, tecnologia],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        tecnologias: formData.tecnologias.filter((tec) => tec !== tecnologia),
+      });
+    }
   };
 
-  const handleRegistrar = (e: any) => {
-    e.preventDefault();
-    // Acá vamos a armar el código nuevo después
+  // Esta funcion junta todo, valida y se lo tira al App.tsx
+  const botonRegistrarClickeado = (e: React.FormEvent) => {
+    e.preventDefault(); // Frena la recarga molesta de la pagina
+
+    // Validacion boba y simple
+    if (
+      !formData.nombre ||
+      !formData.email ||
+      !formData.edad ||
+      !formData.modalidad ||
+      formData.tecnologias.length === 0 ||
+      !formData.aceptaTerminos
+    ) {
+      alert("Por favor, completa todos los campos y acepta los términos.");
+      return; // Lo corta acá, lo de abajo no se ejecuta
+    }
+
+    // Armamos el paquetito oficial que App.tsx espera (Ojo: convertimos edad a Number)
+    const nuevoParticipante: Participante = {
+      id: Date.now(), // Un ID super random usando la hora actual para que no se repitan
+      nombre: formData.nombre,
+      email: formData.email,
+      edad: Number(formData.edad),
+      pais: formData.pais,
+      modalidad: formData.modalidad,
+      nivel: formData.nivel,
+      tecnologias: formData.tecnologias,
+      aceptaTerminos: formData.aceptaTerminos,
+    };
+
+    // ¡Se lo tiramos al padre usando la mochila de las Props!
+    onAgregar(nuevoParticipante);
+
+    // Borrón y cuenta nueva: vaciamos todo para que pueda cargar a otro
+    setFormData({
+      nombre: "",
+      email: "",
+      edad: "",
+      pais: "Argentina",
+      modalidad: "",
+      tecnologias: [],
+      nivel: "principiante",
+      aceptaTerminos: false,
+    });
   };
+
+  const opcionesModalidad = [
+    { valor: "presencial", etiqueta: "Presencial" },
+    { valor: "virtual", etiqueta: "Virtual" },
+    { valor: "hibrido", etiqueta: "Híbrido" },
+  ];
 
   return (
     // 1. Contenedor principal ancho pero con márgenes laterales (px-8) y separado de arriba (mt-8)
@@ -39,7 +100,9 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="nombre"
             placeholder="Nombre"
             value={formData.nombre}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, nombre: e.target.value })
+            }
             className="w-full border border-gray-300 p-2 rounded shadow-sm"
           />
           <input
@@ -47,7 +110,9 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="email"
             placeholder="Email"
             value={formData.email}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             className="w-full border border-gray-300 p-2 rounded shadow-sm"
           />
           <input
@@ -55,13 +120,13 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="edad"
             placeholder="Edad"
             value={formData.edad}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
             className="w-full border border-gray-300 p-2 rounded shadow-sm"
           />
           <select
             name="pais"
             value={formData.pais}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
             className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
           >
             <option value="Argentina">Argentina</option>
@@ -71,8 +136,8 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <option value="España">España</option>
           </select>
         </div>
-
         {/* --- SECCIÓN 2: MODALIDAD --- */}
+        /**Refactorizado */
         <div>
           <p className="text-lg font-bold">Modalidad</p>
           <br />
@@ -82,7 +147,9 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="modalidad"
             value="presencial"
             checked={formData.modalidad === "presencial"}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, modalidad: e.target.value })
+            }
             className="p-7 mr-2"
           />
           <label htmlFor="presencial" className="pr-5">
@@ -95,7 +162,9 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="modalidad"
             value="virtual"
             checked={formData.modalidad === "virtual"}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, modalidad: e.target.value })
+            }
             className="mr-2"
           />
           <label htmlFor="virtual" className="pr-5">
@@ -108,14 +177,15 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             name="modalidad"
             value="hibrido"
             checked={formData.modalidad === "hibrido"}
-            onChange={handleChange}
+            onChange={(e) =>
+              setFormData({ ...formData, modalidad: e.target.value })
+            }
             className="mr-2"
           />
           <label htmlFor="hibrido" className="pr-5">
             Hibrido
           </label>
         </div>
-
         {/* --- SECCIÓN 3: TECNOLOGÍAS --- */}
         <p className="text-lg font-bold">Tecnologias</p>
         <div className="grid grid-cols-[auto_auto_auto] justify-between gap-y-4 gap-x-12 mt-2 w-4/5 mx-auto text-lg font-medium">
@@ -123,10 +193,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-react"
-              name="tecnologias"
               value="react"
               checked={formData.tecnologias.includes("react")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-react" className="cursor-pointer">
@@ -138,10 +209,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-angular"
-              name="tecnologias"
               value="angular"
               checked={formData.tecnologias.includes("angular")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-angular" className="cursor-pointer">
@@ -153,10 +225,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-vue"
-              name="tecnologias"
               value="vue"
               checked={formData.tecnologias.includes("vue")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-vue" className="cursor-pointer">
@@ -168,10 +241,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-node"
-              name="tecnologias"
               value="node"
               checked={formData.tecnologias.includes("node")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-node" className="cursor-pointer">
@@ -183,10 +257,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-python"
-              name="tecnologias"
               value="python"
               checked={formData.tecnologias.includes("python")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-python" className="cursor-pointer">
@@ -198,10 +273,11 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             <input
               type="checkbox"
               id="check-java"
-              name="tecnologias"
               value="java"
               checked={formData.tecnologias.includes("java")}
-              onChange={handleChange}
+              onChange={(e) =>
+                manejarTecnologias(e.target.value, e.target.checked)
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-java" className="cursor-pointer">
@@ -212,23 +288,23 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
         <select
           name="nivel"
           value={formData.nivel}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, nivel: e.target.value })}
           className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
         >
           <option value="principiante">Principiante</option>
           <option value="intermedio">Intermedio</option>
           <option value="avanzado">Avanzado</option>
         </select>
-
         {/* --- SECCIÓN 4: REGISTRO --- */}
         <div className="flex gap-4 flex-col mt-4">
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
               id="check-aceptar"
-              name="aceptaTerminos"
               checked={formData.aceptaTerminos}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, aceptaTerminos: e.target.checked })
+              }
               className="cursor-pointer"
             />
             <label htmlFor="check-aceptar" className="cursor-pointer">
@@ -236,7 +312,7 @@ export default function Formulario({ onAgregar }: FormularioProps) { // <-- FALT
             </label>
           </div>
           <button
-            onClick={handleRegistrar}
+            onClick={botonRegistrarClickeado}
             className="w-fit px-10 py-2 rounded-md bg-blue-700 hover:bg-blue-800 transition-colors text-white font-semibold shadow-sm"
           >
             Registrar
