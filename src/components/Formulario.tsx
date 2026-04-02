@@ -89,6 +89,14 @@ export default function Formulario({ onAgregar }: FormularioProps) {
     { valor: "hibrido", etiqueta: "Híbrido" },
   ];
 
+  const opcionesTecnologias = [
+    {valor:"react", etiqueta: "React"},
+    {valor:"angular", etiqueta: "Angular"},
+    {valor:"vue", etiqueta: "Vue"},
+    {valor:"node", etiqueta: "Node"},
+    {valor:"python", etiqueta: "Python"},
+    {valor:"java", etiqueta: "Java"},
+  ]
   return (
     // 1. Contenedor principal ancho pero con márgenes laterales (px-8) y separado de arriba (mt-8)
     <div className="w-full max-w-4xl mx-auto px-8 mt-8">
@@ -137,154 +145,49 @@ export default function Formulario({ onAgregar }: FormularioProps) {
           </select>
         </div>
         {/* --- SECCIÓN 2: MODALIDAD --- */}
-        /**Refactorizado */
         <div>
           <p className="text-lg font-bold">Modalidad</p>
           <br />
-          <input
-            type="radio"
-            id="presencial"
-            name="modalidad"
-            value="presencial"
-            checked={formData.modalidad === "presencial"}
-            onChange={(e) =>
-              setFormData({ ...formData, modalidad: e.target.value })
-            }
-            className="p-7 mr-2"
-          />
-          <label htmlFor="presencial" className="pr-5">
-            Presencial
-          </label>
 
-          <input
-            type="radio"
-            id="virtual"
-            name="modalidad"
-            value="virtual"
-            checked={formData.modalidad === "virtual"}
-            onChange={(e) =>
-              setFormData({ ...formData, modalidad: e.target.value })
-            }
-            className="mr-2"
-          />
-          <label htmlFor="virtual" className="pr-5">
-            Virtual
-          </label>
-
-          <input
-            type="radio"
-            id="hibrido"
-            name="modalidad"
-            value="hibrido"
-            checked={formData.modalidad === "hibrido"}
-            onChange={(e) =>
-              setFormData({ ...formData, modalidad: e.target.value })
-            }
-            className="mr-2"
-          />
-          <label htmlFor="hibrido" className="pr-5">
-            Hibrido
-          </label>
+          {opcionesModalidad.map((opcion) => (
+            <span key={opcion.valor}>
+              <input
+                type="radio"
+                id={opcion.valor}
+                name="modalidad"
+                value={opcion.valor}
+                checked={formData.modalidad === opcion.valor}
+                onChange={(e) =>
+                  setFormData({ ...formData, modalidad: e.target.value })
+                }
+                className="mr-2"
+              />
+              <label htmlFor={opcion.valor} className="pr-5">
+                {opcion.etiqueta}
+              </label>
+            </span>
+          ))}
         </div>
+
         {/* --- SECCIÓN 3: TECNOLOGÍAS --- */}
         <p className="text-lg font-bold">Tecnologias</p>
         <div className="grid grid-cols-[auto_auto_auto] justify-between gap-y-4 gap-x-12 mt-2 w-4/5 mx-auto text-lg font-medium">
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-react"
-              value="react"
-              checked={formData.tecnologias.includes("react")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-react" className="cursor-pointer">
-              React
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-angular"
-              value="angular"
-              checked={formData.tecnologias.includes("angular")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-angular" className="cursor-pointer">
-              Angular
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-vue"
-              value="vue"
-              checked={formData.tecnologias.includes("vue")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-vue" className="cursor-pointer">
-              Vue
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-node"
-              value="node"
-              checked={formData.tecnologias.includes("node")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-node" className="cursor-pointer">
-              Node
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-python"
-              value="python"
-              checked={formData.tecnologias.includes("python")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-python" className="cursor-pointer">
-              Python
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              id="check-java"
-              value="java"
-              checked={formData.tecnologias.includes("java")}
-              onChange={(e) =>
-                manejarTecnologias(e.target.value, e.target.checked)
-              }
-              className="cursor-pointer"
-            />
-            <label htmlFor="check-java" className="cursor-pointer">
-              Java
-            </label>
-          </div>
+          {opcionesTecnologias.map((opcion) => (
+            <div key={opcion.valor} className="flex items-center gap-1.5">
+              <input
+                type="checkbox"
+                id={opcion.valor}
+                name="tecnologia"
+                value={opcion.valor}
+                checked={formData.tecnologias.includes(opcion.valor)}
+                onChange={(e) => manejarTecnologias(opcion.valor, e.target.checked)}
+                className="cursor-pointer"
+              />
+              <label htmlFor={opcion.valor}> {opcion.etiqueta} </label>
+            </div>
+          ))}
         </div>
+        
         <select
           name="nivel"
           value={formData.nivel}
