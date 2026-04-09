@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import Header from "./components/Header";
 import Formulario from "./components/Formulario";
 import Busqueda from "./components/Busqueda";
 import TarjetaParticipantes from "./components/TarjetaParticipante";
@@ -71,12 +70,16 @@ function App() {
 
   if (participantes.length === 0) {
     contenidoLista = (
-      <div className="col-span-3 text-center text-gray-500 font-medium">No hay participantes aún. ¡Agregá el primero!</div>
+      <div className="col-span-3 text-center text-gray-500 font-medium">
+        No hay participantes aún. ¡Agregá el primero!
+      </div>
     );
   } else if (listaFiltrada.length === 0) {
     // Escenario extra: ¡Tienen datos pero apretaron tantos filtros que no hay coincidencias!
     contenidoLista = (
-      <div className="col-span-3 text-center text-gray-500 font-medium">No se encontraron resultados para esos filtros.</div>
+      <div className="col-span-3 text-center text-gray-500 font-medium">
+        No se encontraron resultados para esos filtros.
+      </div>
     );
   } else {
     // Acá mapeamos el EMBUDO (listaFiltrada), ya no mapeamos el tanque entero (participantes)
@@ -96,7 +99,14 @@ function App() {
 
   return (
     <div className="flex flex-col gap-2 h-screen items-center justify-start bg-white pb-20">
-      <Header />
+      <div className="w-full">
+        <h1 className="text-3xl font-bold text-left mb-6 bg-green-500 px-5 py-2">
+          Registro de Participantes
+        </h1>
+        <p className="px-5 py-0 font-semibold text-lg text-center">
+          Participantes Registrados: {participantes.length}
+        </p>
+      </div>
 
       <Formulario onAgregar={agregarParticipante} />
 
