@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ---------- EXTRAS BACKEND (POR SEGURIDAD GLOBAL) ----------
+back/venv/
+back/.venv/
+back/__pycache__/
+back/*.db
+back/.env
