@@ -1,12 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import type Participante from "../models/Participante";
+import { ParticipantesContext } from "../context/ParticipantesContext";
 
-/**Le hago saber como funciona el prop que viene de app */
-interface FormularioProps {
-  onAgregar: (nuevoParticipante: Participante) => void;
-}
-
-export default function Formulario({ onAgregar }: FormularioProps) {
+export default function Formulario() {
+  const { agregar } = useContext(ParticipantesContext);
   // El estado donde tenemos el borrador de nuestro formulario
   const [formData, setFormData] = useState({
     nombre: "",
@@ -37,8 +34,8 @@ export default function Formulario({ onAgregar }: FormularioProps) {
     }
   };
 
-  // Esta funcion junta todo, valida y se lo tira al App.tsx
-  const botonRegistrarClickeado = (e: React.FormEvent) => {
+  // Esta funcion junta todo, valida y se lo tira al Contexto
+  const botonRegistrarClickeado = async (e: React.FormEvent) => {
     e.preventDefault(); // Frena la recarga molesta de la pagina
 
     // Validacion boba y simple
@@ -67,8 +64,8 @@ export default function Formulario({ onAgregar }: FormularioProps) {
       aceptaTerminos: formData.aceptaTerminos,
     };
 
-    // ¡Se lo tiramos al padre usando la mochila de las Props!
-    onAgregar(nuevoParticipante);
+    // ¡Se lo pasamos directamente al contexto!
+    await agregar(nuevoParticipante);
 
     // Borrón y cuenta nueva: vaciamos todo para que pueda cargar a otro
     setFormData({

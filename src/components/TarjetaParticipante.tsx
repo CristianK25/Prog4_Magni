@@ -1,22 +1,15 @@
+import { useContext } from "react";
+import type Participante from "../models/Participante";
+import { ParticipantesContext } from "../context/ParticipantesContext";
+
 interface PropsTarjeta {
-  id: number;
-  nombre: string;
-  pais: string;
-  modalidad: string;
-  nivel: string;
-  tecnologias: string[];
-  onEliminar: (id: number) => void;
+  participante: Participante;
 }
 
-export default function TarjetaParticipantes({
-  id,
-  nombre,
-  pais,
-  modalidad,
-  nivel,
-  tecnologias,
-  onEliminar,
-}: PropsTarjeta) {
+export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
+  const { eliminar } = useContext(ParticipantesContext);
+  // Hacemos destructuring acá adentro para no tener que cambiar todo el JSX
+  const { id, nombre, pais, modalidad, nivel, tecnologias } = participante;
   // Forma ultra simple: analizamos el texto que llegó en `nivel`
   // y armamos una variable con las clases de Tailwind correspondientes
   let colorNivel = "";
@@ -50,7 +43,7 @@ export default function TarjetaParticipantes({
       <p id="tecParticipante">{tecnologias.join(", ")}</p>
 
       <button
-        onClick={() => onEliminar(id)}
+        onClick={() => eliminar(id)}
         className="mt-4 bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 transition"
       >
         Eliminar
