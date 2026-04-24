@@ -4,7 +4,7 @@ import type Participante from "../models/Participante";
 // Configuramos una instancia de axios.
 // Cuando tengas el backend real levantado, cambiás esta URL y magia, anda en todos lados.
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "http://localhost:8000/api",
   // Podrías ponerle timeout o headers acá, etc.
 });
 
