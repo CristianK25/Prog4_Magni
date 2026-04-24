@@ -4,7 +4,7 @@ import type Participante from "../models/Participante";
 // Configuramos una instancia de axios.
 // Cuando tengas el backend real levantado, cambiás esta URL y magia, anda en todos lados.
 const api = axios.create({
-  baseURL: "http://localhost:8080/api", 
+  baseURL: "http://localhost:8080/api",
   // Podrías ponerle timeout o headers acá, etc.
 });
 
@@ -20,7 +20,7 @@ export const ParticipanteService = {
       console.error("Error trayendo participantes del back", error);
       // Por ahora para no frenarte te devuelve vacío.
       // Cuando tengamos el backend real capaz querés que estalle con throw error;
-      return []; 
+      return [];
     }
   },
 

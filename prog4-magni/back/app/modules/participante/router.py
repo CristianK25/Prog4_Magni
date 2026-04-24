@@ -21,6 +21,8 @@ def delete_participante(participante_id: int, session: Session = Depends(get_ses
     if not exito:
         raise HTTPException(status_code=404, detail="Participante no encontrado")
     return {"message": "Borrado con éxito campeón"}
+   
+    #TP5
 
 @router.put("/{participante_id}", response_model=schema.ParticipanteResponse)
 def update_participante(participante_id: int, datos: schema.ParticipanteUpdate, session: Session = Depends(get_session)):
