@@ -79,12 +79,14 @@ def update_participante(participante_id: int, datos: schema.ParticipanteUpdate, 
     db_participante.email = datos.email
     db_participante.edad = datos.edad
     db_participante.pais = datos.pais
-    db_participante.modalidad = datos.modalidad
+    db_participante.modalidad = datos.modalidad 
     db_participante.nivel = datos.nivel
     db_participante.aceptaTerminos = datos.aceptaTerminos
     db_participante.tecnologias = ",".join(datos.tecnologias)  # Lista -> string separado por comas
+
     
-    # 4. Commiteamos los cambios en la BD y refrescamos el objeto desde la BD
+    #ARREGLAR ESTO 
+
     session.commit()
     session.refresh(db_participante)
     

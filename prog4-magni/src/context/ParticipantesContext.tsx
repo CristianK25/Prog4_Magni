@@ -10,24 +10,24 @@ export interface ParticipantesContextType {
   agregar: (p: Omit<Participante, "id">) => Promise<void>;
   eliminar: (id: number) => Promise<void>;
   editar: (id: number, p: Omit<Participante, "id">) => Promise<void>;
-  cargando: boolean; // Para tirar un "Cargando..." y que quede fachero
+  cargando: boolean;
   participanteSeleccionado: Participante | null;
   seleccionarParaEdicion: (p: Participante | null) => void;
 }
 
-// 1. Nacimiento del Contexto: Al principio lo creamos "vacío" forzando el tipo para calmar a TypeScript
+
 export const ParticipantesContext = createContext<ParticipantesContextType>(
   {} as ParticipantesContextType
 );
 
-// 2. El Provider: Es el componente Padre Absoluto que va a envolver tu app
+
 export const ParticipantesProvider = ({ children }: { children: ReactNode }) => {
-  // ACÁ VIENE LA MAGIA: Todo el estado se mudó acá, es la base de datos central en memoria
+  // Todo el estado se mudó acá, es la base de datos central en memoria
   const [participantes, dispatch] = useReducer(participantesReducer, []);
   const [cargando, setCargando] = useState(true);
   const [participanteSeleccionado, setParticipanteSeleccionado] = useState<Participante | null>(null);
 
-  // Cuando se monta el provider por primera vez, vamos a buscar al backend
+  // Cuando se monta el provider por primera vez, busca al backend
   const cargarParticipantes = async () => {
     setCargando(true);
     try {
@@ -50,7 +50,7 @@ export const ParticipantesProvider = ({ children }: { children: ReactNode }) => 
     try {
       // 1. El backend nos da el OK y nos devuelve el objeto CON EL ID REAL generado
       const participanteCreado = await ParticipanteService.create(nuevoParticipante);
-      
+
       // 2. Si llegamos acá es porque no explotó, recién acá tocamos el estado visible
       dispatch({ type: "AGREGAR", payload: participanteCreado });
     } catch (error) {
@@ -63,7 +63,7 @@ export const ParticipantesProvider = ({ children }: { children: ReactNode }) => 
     try {
       // 1. Mata al loco en la base de datos
       await ParticipanteService.delete(id);
-      
+
       // 2. Lo saca de la memoria local
       dispatch({ type: "ELIMINAR", payload: id });
     } catch (error) {
