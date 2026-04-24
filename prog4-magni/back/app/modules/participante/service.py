@@ -6,56 +6,30 @@ from . import schema
 def get_all_participantes(session: Session) -> List[schema.ParticipanteResponse]:
     db_participantes = session.exec(select(Participante)).all()
     
-    # Hacemos el mapeo acá, el servicio se encarga de masticar los datos
+    # Mapeo dinámico: extraemos el diccionario y ajustamos el campo especial
     response = []
     for p in db_participantes:
-        tecs = p.tecnologias.split(",") if p.tecnologias else []
-        response.append(
-            schema.ParticipanteResponse(
-                id=p.id,
-                nombre=p.nombre,
-                email=p.email,
-                edad=p.edad,
-                pais=p.pais,
-                modalidad=p.modalidad,
-                nivel=p.nivel,
-                aceptaTerminos=p.aceptaTerminos,
-                tecnologias=tecs
-            )
-        )
+        p_dict = p.model_dump()
+        p_dict["tecnologias"] = p.tecnologias.split(",") if p.tecnologias else []
+        response.append(schema.ParticipanteResponse(**p_dict))
     return response
 
 def create_participante(participante_in: schema.ParticipanteCreate, session: Session) -> schema.ParticipanteResponse:
-    # El servicio se encarga de acomodar el string para SQLite
-    tecs_str = ",".join(participante_in.tecnologias)
+    # Extraemos todos los datos y convertimos la lista a string para SQLite
+    create_data = participante_in.model_dump()
+    create_data["tecnologias"] = ",".join(create_data["tecnologias"])
     
-    nuevo_db = Participante(
-        nombre=participante_in.nombre,
-        email=participante_in.email,
-        edad=participante_in.edad,
-        pais=participante_in.pais,
-        modalidad=participante_in.modalidad,
-        nivel=participante_in.nivel,
-        aceptaTerminos=participante_in.aceptaTerminos,
-        tecnologias=tecs_str
-    )
+    # Creamos la instancia desempaquetando el diccionario completo
+    nuevo_db = Participante(**create_data)
     
     session.add(nuevo_db)
     session.commit()
     session.refresh(nuevo_db)
     
-    # Y devuelve ya el Schema listo para FastAPI/React
-    return schema.ParticipanteResponse(
-        id=nuevo_db.id,
-        nombre=nuevo_db.nombre,
-        email=nuevo_db.email,
-        edad=nuevo_db.edad,
-        pais=nuevo_db.pais,
-        modalidad=nuevo_db.modalidad,
-        nivel=nuevo_db.nivel,
-        aceptaTerminos=nuevo_db.aceptaTerminos,
-        tecnologias=nuevo_db.tecnologias.split(",") if nuevo_db.tecnologias else []
-    )
+    # Retornamos el schema usando mapeo dinámico
+    response_dict = nuevo_db.model_dump()
+    response_dict["tecnologias"] = nuevo_db.tecnologias.split(",") if nuevo_db.tecnologias else []
+    return schema.ParticipanteResponse(**response_dict)
 
 def delete_participante(participante_id: int, session: Session) -> bool:
     db_participante = session.get(Participante, participante_id)
@@ -73,32 +47,19 @@ def update_participante(participante_id: int, datos: schema.ParticipanteUpdate, 
     if not db_participante:
         return None
     
-    # 3. Aplicamos los cambios campo por campo.
-    #    SQLite no entiende listas, así que las tecnologias las guardamos como "react,python,java"
-    db_participante.nombre = datos.nombre
-    db_participante.email = datos.email
-    db_participante.edad = datos.edad
-    db_participante.pais = datos.pais
-    db_participante.modalidad = datos.modalidad 
-    db_participante.nivel = datos.nivel
-    db_participante.aceptaTerminos = datos.aceptaTerminos
-    db_participante.tecnologias = ",".join(datos.tecnologias)  # Lista -> string separado por comas
-
+    # 3. Extraemos los datos a actualizar del schema
+    update_data = datos.model_dump(exclude_unset=True)
     
-    #ARREGLAR ESTO 
+    if "tecnologias" in update_data:
+        update_data["tecnologias"] = ",".join(update_data["tecnologias"])
+
+    # 5. Aplicamos los cambios al objeto de la base de datos de una sola vez
+    db_participante.sqlmodel_update(update_data)
 
     session.commit()
     session.refresh(db_participante)
     
-    # 5. Devolvemos el schema formateado listo para que FastAPI lo serialice a JSON
-    return schema.ParticipanteResponse(
-        id=db_participante.id,
-        nombre=db_participante.nombre,
-        email=db_participante.email,
-        edad=db_participante.edad,
-        pais=db_participante.pais,
-        modalidad=db_participante.modalidad,
-        nivel=db_participante.nivel,
-        aceptaTerminos=db_participante.aceptaTerminos,
-        tecnologias=db_participante.tecnologias.split(",") if db_participante.tecnologias else []
-    )
+    # 6. Devolvemos el schema usando mapeo dinámico
+    response_dict = db_participante.model_dump()
+    response_dict["tecnologias"] = db_participante.tecnologias.split(",") if db_participante.tecnologias else []
+    return schema.ParticipanteResponse(**response_dict)
