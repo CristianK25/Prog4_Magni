@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import type Participante from "../models/Participante";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 
@@ -7,44 +8,30 @@ interface PropsTarjeta {
 }
 
 export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
-  const { eliminar, seleccionarParaEdicion } = useContext(ParticipantesContext);
-  // Hacemos destructuring acá adentro para no tener que cambiar todo el JSX
+  const { eliminar } = useContext(ParticipantesContext);
+  const navigate = useNavigate();
+  
   const { id, nombre, pais, modalidad, nivel, tecnologias } = participante;
-  // Forma ultra simple: analizamos el texto que llegó en `nivel`
-  // y armamos una variable con las clases de Tailwind correspondientes
+  
   let colorNivel = "";
-
-  if (nivel === "principiante") {
-    colorNivel = "bg-green-200 text-green-900";
-  } else if (nivel === "intermedio") {
-    colorNivel = "bg-yellow-200 text-yellow-900";
-  } else if (nivel === "avanzado") {
-    colorNivel = "bg-red-200 text-red-900";
-  }
+  if (nivel === "principiante") colorNivel = "bg-green-200 text-green-900";
+  else if (nivel === "intermedio") colorNivel = "bg-yellow-200 text-yellow-900";
+  else if (nivel === "avanzado") colorNivel = "bg-red-200 text-red-900";
 
   return (
-    <div
-      className={`border border-gray-200 shadow-sm rounded p-4 ${colorNivel}`}
-    >
-      <p id="nombreParticipante" className="text-lg font-bold">
-        {nombre}
-      </p>
-      <p id="paisParticipante">{pais}</p>
-      <p id="modalidadParticipante">Modalidad: {modalidad}</p>
+    <div className={`border border-gray-200 shadow-sm rounded p-4 bg-white`}>
+      <p className="text-lg font-bold">{nombre}</p>
+      <p className="text-gray-600">{pais}</p>
+      <p className="text-sm">Modalidad: {modalidad}</p>
 
-      {/* Acá inyectamos la variable colorNivel adentro del className.
-          El inline-block y el px-2 py-1 son para que parezca una pilorita (badge) */}
-      <p
-        className={`inline-block px-2 py-1 rounded font-semibold mt-2 mb-2 ${colorNivel}`}
-      >
+      <p className={`inline-block px-2 py-1 rounded font-semibold mt-2 mb-2 ${colorNivel}`}>
         Nivel: {nivel}
       </p>
-      {/* SE JOINAN LOS ELEMENTOS DEL ARRAY CON UNA COMA Y ESPACIO PARA MOSTRARLOS LINDO */}
-      <p id="tecParticipante">{tecnologias.join(", ")}</p>
+      <p className="text-sm text-gray-700">{tecnologias.join(", ")}</p>
 
       <div className="flex gap-2 mt-4">
         <button
-          onClick={() => seleccionarParaEdicion(participante)}
+          onClick={() => navigate(`/editar/${id}`)}
           className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600 transition"
         >
           Editar

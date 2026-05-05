@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 import { filtrarParticipantes } from "../utils/filtros";
 import Busqueda from "../components/Busqueda";
@@ -48,25 +47,6 @@ export default function ListaPage() {
 
   return (
     <div className="flex flex-col gap-2 min-h-screen items-center justify-start bg-white pb-20">
-      {/* Encabezado */}
-      <div className="w-full">
-        <h1 className="text-3xl font-bold text-left mb-6 bg-green-500 px-5 py-2">
-          Registro de Participantes
-        </h1>
-        <div className="flex justify-between items-center px-10 max-w-4xl mx-auto w-full">
-          <p className="font-semibold text-lg">
-            Participantes Registrados: {participantes.length}
-          </p>
-          {/* Botón para ir a la página de creación */}
-          <Link
-            to="/nuevo"
-            className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-md font-bold transition-colors"
-          >
-            + Nuevo Participante
-          </Link>
-        </div>
-      </div>
-
       {/* Buscador */}
       <Busqueda filtros={filtros} onFiltrar={setFiltros} />
 
