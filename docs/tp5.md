@@ -1,64 +1,81 @@
-# Trabajo Práctico N° 5: Gestión de Estado Avanzado
-## "useReducer + Context: Escalando la Lógica de Negocio"
+1
 
-Cuando una aplicación crece, manejar el estado con simples `useState` se vuelve un dolor de cabeza. La lógica se dispersa, los componentes se llenan de funciones y el mantenimiento se vuelve una pesadilla. Acá es donde entra **useReducer**.
+Automatic Zoom
+
+# Trabajo Practico N° 5 – Programación 4
+## “Gestión de Estado con useReducer + Context”
+
+**“¿Qué pasa cuando la lógica del estado empieza a crecer mucho?”**
+*   La lógica se vuelve dispersa
+*   Se hace difícil escalar la aplicación
+*   Se hace difícil el mantenimiento
+
+**useReducer**
+useReducer es un hook que permite manejar el estado mediante acciones. Centraliza TODA la lógica en un solo lugar. En lugar de modificar el estado directamente, enviamos órdenes (acciones)
+
+**Objetivos del Práctico:**
+*   Reemplazar useState por useReducer
+*   Centralizar la lógica de participantes
+*   Integrar useReducer con Context
+*   Mantener persistencia con JSON y Database
+
+**Concepto clave**
+“En lugar de modificar el estado directamente, enviamos acciones que el reducer procesa.”
+
+En lugar de modificar el estado directamente:
+`setEstado(nuevoEstado)`
+
+usamos:
+`dispatch({ type: "ACCION", payload: dato })`
 
 ---
 
-## 🎯 Objetivos del Práctico
-*   **Migración:** Reemplazar `useState` por `useReducer` para la gestión de participantes.
-*   **Centralización:** Agrupar toda la lógica de manipulación de datos en un solo lugar (el Reducer).
-*   **Inyección de Dependencias:** Integrar el Reducer con **Context API** para evitar el "Prop Drilling".
-*   **Persistencia:** Asegurar que los cambios impacten correctamente en el Backend y la Base de Datos.
+### Componentes del hook (patrón)
 
----
+**reducer**
+Es una función que decide cómo cambia el estado.
+*   Recibe el estado actual
+*   Recibe una acción
+*   Devuelve un nuevo estado
 
-## 🧠 Concepto Clave: El Patrón Reducer
-En lugar de modificar el estado directamente (`setEstado(nuevo)`), enviamos **acciones** que describen una intención. El Reducer es quien decide, basado en esa acción, cómo debe transformarse el estado.
-
-### El Flujo de Datos
-```mermaid
-graph LR
-    A[Componente] -- dispatch(action) --> B((Reducer))
-    B -- calcula nuevo estado --> C[Estado Global]
-    C -- re-render --> A
+**action**
+Es un objeto que describe qué queremos hacer. Ejemplo:
+```tsx
+{
+type: "AGREGAR",
+payload: participante
+}
 ```
 
-### Componentes del Patrón
-1.  **State:** El valor actual de nuestra "verdad" (la lista de participantes).
-2.  **Action:** Un objeto que dice qué queremos hacer. Ejemplo: `{ type: "ELIMINAR", payload: 5 }`.
-3.  **Reducer:** La función pura que recibe el estado actual + la acción y devuelve el nuevo estado.
-4.  **Dispatch:** La "mensajería" que envía la acción al Reducer.
+**dispatch**
+Es la función que envía la acción al reducer.
+`dispatch({ type: "AGREGAR", payload: nuevo });`
 
 ---
 
-## 🛠 Implementación: `participantesReducer`
+### Flujo completo
 
-El reducer debe manejar todas las operaciones CRUD y de sincronización con el servidor. Las acciones principales son:
+---
 
-```typescript
+### Estructura
+
+En **participantesReducer** deberá implementar la lógica necesaria que permita ejecutar las acciones asociadas a la aplicación, principalmente aquellas relacionadas a la manipulación de los datos y peticiones cliente/servidor.
+
+Por ejemplo las siguientes acciones:
+```tsx
 export type Action =
-  | { type: "GET_PARTICIPANTES"; payload: Participante[] } // Carga inicial
-  | { type: "AGREGAR"; payload: Participante }            // Nuevo ingreso
-  | { type: "ELIMINAR"; payload: number }                  // Borrado por ID
-  | { type: "EDITAR"; payload: Participante }            // Actualización
-  | { type: "SET"; payload: Participante[] }               // Seteo forzado
-  | { type: "RESET"; payload: Participante[] };            // Limpieza/Reset
+| { type: "GET_PARTICIPANTES"; payload: Participante[] }
+| { type: "AGREGAR"; payload: Participante }
+| { type: "ELIMINAR"; payload: number }
+| { type: "RESET"; payload: Participante[] }
+| { type: "EDITAR"; payload: Participante }
+| { type: "SET"; payload: Participante[] };
 ```
 
----
-
-## 🚀 El Desafío: Funcionalidad de Edición
-
-La gran novedad de este TP es la **Edición de Participantes**. El flujo debe ser:
-
-1.  **Captura:** Al hacer clic en "Editar", el participante seleccionado se debe cargar en el formulario global.
-2.  **UX Dinámica:** El botón del formulario debe cambiar su texto (ej: de "Registrar" a "Guardar Cambios") para indicar que estamos en modo edición.
-3.  **Persistencia:** Al guardar, se debe disparar una petición `PUT` al backend.
-4.  **Sincronización:** El Reducer debe actualizar solo el elemento modificado en el estado local para que la tarjeta se refresque instantáneamente.
-
-> [!TIP]
-> **Mejora de UX:** Cambiar el color del botón o agregar un botón "Cancelar Edición" ayuda mucho a que el usuario no se sienta perdido.
+Deberá agregar una nueva funcionalidad que permita editar un participante, al hacer click sobre el botón “Editar” los datos del participante se deberán cargar automáticamente en el Formulario, y tras la modificación de alguno de sus datos y su correspondiente almacenamiento se actualizara la tarjeta con la nueva información. Modifique el backend para soportar esta nueva funcionalidad.
 
 ---
-**Recuerda:** "En lugar de modificar el estado directamente, enviamos acciones que el reducer procesa." ¡Esa es la base de una arquitectura sólida!
+
+### CARGO LOS DATOS
+El mismo botón deberá insertar o actualizar dependiendo el caso, una mejora es cambiar el texto del botón para indicar que se esta ejecutando.
+.
