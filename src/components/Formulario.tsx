@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import type Participante from "../models/Participante";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 
-export default function Formulario() {
+export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
   const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } = useContext(ParticipantesContext);
   // El estado donde tenemos el borrador de nuestro formulario
   const [formData, setFormData] = useState({
@@ -104,6 +104,10 @@ export default function Formulario() {
         nivel: "principiante",
         aceptaTerminos: false,
       });
+    }
+
+    if (onSuccess) {
+      onSuccess();
     }
   };
 
