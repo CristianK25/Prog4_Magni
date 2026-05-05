@@ -129,7 +129,7 @@ import ParticipanteCard from "../components/ParticipanteCard";
  
 export default function Lista() { 
  
-  const { participantes } = useParticipantes(); 
+  const { participantes } = useContext(ParticipantesContext); 
  
   return ( 
     <div className="p-6"> 
@@ -165,7 +165,7 @@ import { useParticipantes } from "../context/ParticipantesContext";
 export default function ParticipanteCard({ participante }: { 
 participante: Participante }) { 
  
-  const { eliminar } = useParticipantes(); 
+  const { eliminar } = useContext(ParticipantesContext); 
   const navigate = useNavigate(); 
  
   return ( 
@@ -230,13 +230,13 @@ export default function EditarPage() {
  
   const { id } = useParams(); 
   const navigate = useNavigate(); 
-  const { participantes, seleccionar } = useParticipantes(); 
+  const { participantes, seleccionarParaEdicion } = useContext(ParticipantesContext); 
  
   useEffect(() => { 
     const participante = participantes.find(p => p.id === 
 Number(id)); 
     if (participante) { 
-      seleccionar(participante); 
+      seleccionarParaEdicion(participante); 
     } 
   }, [id]); 
  
@@ -258,14 +258,14 @@ Number(id));
 ```tsx
 export default function Formulario({ onSuccess }: any) {
 
-  const { agregar, editar, participanteSeleccionado, seleccionar } = useParticipantes();
+  const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } = useContext(ParticipantesContext);
 
   const submit = (e: any) => {
     e.preventDefault();
 
     if (participanteSeleccionado) {
-      editar({ ...participanteSeleccionado, nombre });
-      seleccionar(null);
+      editar(participanteSeleccionado.id, { ...formData });
+      seleccionarParaEdicion(null);
     } else {
       agregar(nuevo);
     }
