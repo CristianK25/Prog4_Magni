@@ -1,0 +1,8 @@
+INICIAR BACK:
+
+    uvicorn main:app --reload --port 8002
+
+
+INICIAR FRONT:
+
+    npm run dev
