@@ -1,12 +1,25 @@
 import type { FiltrosBusqueda } from "../utils/filtros";
 
+/**
+ * Propiedades para el componente de búsqueda.
+ */
 interface BusquedaProps {
+  /** Estado actual de los filtros de búsqueda */
   filtros: FiltrosBusqueda;
+  /** Callback para actualizar los filtros en el estado global/padre */
   onFiltrar: (nuevosFiltros: FiltrosBusqueda) => void;
 }
 
+/**
+ * Componente de barra de búsqueda con filtros por texto, modalidad y nivel.
+ * 
+ * @param {BusquedaProps} props - Propiedades del componente.
+ * @returns {JSX.Element} Un contenedor con inputs y selects para filtrar participantes.
+ */
 export default function Busqueda({ filtros, onFiltrar }: BusquedaProps) {
-  // Función para resetear todo a vacío
+  /**
+   * Resetea todos los filtros a su estado inicial vacío.
+   */
   const limpiarFiltros = () => {
     onFiltrar({
       texto: "",
@@ -15,7 +28,6 @@ export default function Busqueda({ filtros, onFiltrar }: BusquedaProps) {
     });
   };
 
-  // Como agregamos un botón, cambiamos grid-cols-3 a grid-cols-[1fr_1fr_1fr_auto] para que el botón ocupe lo mínimo
   return (
     <div className="grid grid-cols-[1fr_1fr_1fr_auto] items-center m-4 mb-6 gap-2 w-full max-w-4xl mx-auto px-8 mt-8 border border-gray-200 p-4 shadow-sm rounded bg-gray-50">
       <input

@@ -1,10 +1,8 @@
 from pydantic import BaseModel
 from typing import List
 
-# El Schema sirve para decirle a FastAPI qué datos ESPERAR de React
-# y qué datos DEVOLVERLE a React. Pydantic hace la validación mágica.
-
 class ParticipanteBase(BaseModel):
+    """Esquema base con los campos comunes para un Participante."""
     nombre: str
     email: str
     edad: int
@@ -12,15 +10,17 @@ class ParticipanteBase(BaseModel):
     modalidad: str
     nivel: str
     aceptaTerminos: bool
-    tecnologias: List[str] # Fijate que acá SÍ es una Lista, como quiere React
+    tecnologias: List[str]
 
 class ParticipanteCreate(ParticipanteBase):
+    """Esquema para la creación de un nuevo participante."""
     pass
 
 class ParticipanteResponse(ParticipanteBase):
+    """Esquema para la respuesta de datos de un participante, incluye el ID."""
     id: int
 
-# Schema para la edición (PUT /api/participantes/{id}).
-# Hereda TODOS los campos de Base: el front manda el objeto completo actualizado.
+
 class ParticipanteUpdate(ParticipanteBase):
+    """Esquema para actualizar los datos de un participante existente."""
     pass

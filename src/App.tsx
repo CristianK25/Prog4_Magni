@@ -7,6 +7,14 @@ import PublicaPage from "./pages/PublicaPage";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./routes/PrivateRoute";
 
+/**
+ * Componente raíz de la aplicación.
+ * 
+ * Define la estructura base de la interfaz y la configuración de las rutas
+ * protegidas y públicas, utilizando React Router para la navegación.
+ * 
+ * @returns {JSX.Element} El árbol de componentes con la configuración de rutas.
+ */
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">

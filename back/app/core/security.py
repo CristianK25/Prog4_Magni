@@ -5,18 +5,42 @@ from typing import Optional
 from app.core.config import settings
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Compara una contraseña plana con su hash guardado"""
-    # bcrypt requiere bytes, así que codificamos a utf-8
+    """
+    Verifica si una contraseña en texto plano coincide con su hash almacenado.
+
+    Args:
+        plain_password (str): La contraseña ingresada por el usuario.
+        hashed_password (str): El hash almacenado en la base de datos.
+
+    Returns:
+        bool: True si coinciden, False en caso contrario.
+    """
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 def get_password_hash(password: str) -> str:
-    """Genera un hash a partir de una contraseña plana"""
+    """
+    Genera un hash seguro para una contraseña utilizando bcrypt.
+
+    Args:
+        password (str): La contraseña en texto plano.
+
+    Returns:
+        str: El hash resultante decodificado en string.
+    """
     salt = bcrypt.gensalt()
-    # Generamos el hash en bytes y lo convertimos a string para guardarlo
     return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Genera un token JWT firmado"""
+    """
+    Genera un token de acceso JWT firmado.
+
+    Args:
+        data (dict): Información a incluir en el payload del token (ej. {'sub': username}).
+        expires_delta (Optional[timedelta]): Tiempo personalizado de expiración.
+
+    Returns:
+        str: El token JWT codificado.
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta

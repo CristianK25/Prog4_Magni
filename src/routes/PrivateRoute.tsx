@@ -2,15 +2,28 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import type { ReactNode } from "react";
 
+/**
+ * Propiedades para el componente de ruta privada.
+ */
 interface PrivateRouteProps {
+  /** Componentes que se renderizarán si el acceso es permitido */
   children: ReactNode;
+  /** Rol mínimo requerido para acceder a la ruta (opcional) */
   rol?: "ADMIN" | "CONSULTA";
 }
 
+/**
+ * Componente de orden superior para proteger rutas según el estado de autenticación.
+ * 
+ * Verifica si existe un usuario autenticado y si posee el rol necesario.
+ * Redirige al login si no hay sesión, o al inicio si no cumple con el rol.
+ * 
+ * @param {PrivateRouteProps} props - Propiedades del componente.
+ * @returns {JSX.Element} El contenido protegido o un componente de redirección.
+ */
 const PrivateRoute = ({ children, rol }: PrivateRouteProps) => {
   const { user, cargando } = useAuth();
 
-  // Si todavía estamos viendo si hay un token en el localStorage, esperamos
   if (cargando) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -19,17 +32,14 @@ const PrivateRoute = ({ children, rol }: PrivateRouteProps) => {
     );
   }
 
-  // Si no hay usuario logueado, mandalo al login de una
   if (!user) {
     return <Navigate to="/login" />;
   }
 
-  // Si se requiere un rol específico (ej: ADMIN) y el usuario no lo tiene
   if (rol && user.rol !== rol) {
     return <Navigate to="/" />;
   }
 
-  // Si todo está ok, renderizamos la página protegida
   return <>{children}</>;
 };
 

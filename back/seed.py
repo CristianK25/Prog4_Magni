@@ -4,9 +4,13 @@ from app.modules.usuarios.model import Usuario
 from app.core.security import get_password_hash
 
 def seed_users():
-    """Inserta usuarios iniciales si la tabla está vacía"""
+    """
+    Inserta usuarios iniciales en la base de datos si la tabla está vacía.
+
+    Crea un usuario administrador ('admin') y uno de consulta ('consulta')
+    con sus respectivas contraseñas hasheadas.
+    """
     with Session(engine) as session:
-        # Contamos cuántos hay
         count = session.exec(select(func.count(Usuario.id))).one()
         
         if count > 0:

@@ -1,5 +1,8 @@
 import type Participante from "../models/Participante";
 
+/**
+ * Define los tipos de acciones que pueden modificar el estado de los participantes.
+ */
 export type Action =
   | { type: "GET_PARTICIPANTES"; payload: Participante[] }
   | { type: "AGREGAR"; payload: Participante }
@@ -8,6 +11,13 @@ export type Action =
   | { type: "EDITAR"; payload: Participante }
   | { type: "SET"; payload: Participante[] };
 
+/**
+ * Reducer encargado de gestionar las mutaciones del estado de los participantes.
+ * 
+ * @param {Participante[]} state - Estado actual (lista de participantes).
+ * @param {Action} action - Objeto de acción con el tipo y los datos necesarios.
+ * @returns {Participante[]} Nuevo estado resultante de aplicar la acción.
+ */
 export const participantesReducer = (state: Participante[], action: Action): Participante[] => {
   switch (action.type) {
     case "GET_PARTICIPANTES":

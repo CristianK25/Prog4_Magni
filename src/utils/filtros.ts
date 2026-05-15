@@ -1,41 +1,41 @@
 import type Participante from "../models/Participante";
 
 /**
- * Interface que representa el estado de los filtros
+ * Define los criterios de búsqueda aplicables a la lista de participantes.
  */
 export interface FiltrosBusqueda {
+  /** Texto para buscar por nombre (case-insensitive) */
   texto: string;
+  /** Modalidad específica (presencial, virtual, hibrido) */
   modalidad: string;
+  /** Nivel de experiencia (principiante, intermedio, avanzado) */
   nivel: string;
 }
 
 /**
- * Agarra la lista de participantes, los pasa por el "embudo mágico" de los filtros,
- * y devuelve la lista limpia con los que sobrevivieron.
+ * Filtra una lista de participantes basándose en múltiples criterios de búsqueda.
+ * Aplica una lógica de intersección (AND) donde el participante debe cumplir
+ * con todos los filtros activos para ser incluido en el resultado.
  * 
- * @param participantes Toda la lista completa.
- * @param filtros Las condiciones que debe cumplir.
- * @returns Array de Participantes que cumplen los requisitos.
+ * @param {Participante[]} participantes - La lista completa de participantes a filtrar.
+ * @param {FiltrosBusqueda} filtros - Los criterios de filtrado seleccionados.
+ * @returns {Participante[]} Un nuevo arreglo con los participantes que coinciden con los filtros.
  */
 export const filtrarParticipantes = (
   participantes: Participante[],
   filtros: FiltrosBusqueda
 ): Participante[] => {
   return participantes.filter((persona) => {
-    // 1. Filtro de Texto
     const coincideTexto =
       filtros.texto === "" ||
       persona.nombre.toLowerCase().includes(filtros.texto.toLowerCase());
 
-    // 2. Filtro de Modalidad
     const coincideModalidad =
       filtros.modalidad === "" || persona.modalidad === filtros.modalidad;
 
-    // 3. Filtro de Nivel
     const coincideNivel =
       filtros.nivel === "" || persona.nivel === filtros.nivel;
 
-    // Solo pasan los que cumplan las 3 condiciones a la vez
     return coincideTexto && coincideModalidad && coincideNivel;
   });
 };

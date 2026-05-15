@@ -4,21 +4,25 @@ import { filtrarParticipantes } from "../utils/filtros";
 import Busqueda from "../components/Busqueda";
 import TarjetaParticipantes from "../components/TarjetaParticipante";
 
+/**
+ * Página principal que muestra el listado de participantes.
+ * 
+ * Permite filtrar la lista por nombre, modalidad y nivel mediante el componente Busqueda.
+ * Maneja estados de carga y visualización condicional de resultados.
+ * 
+ * @returns {JSX.Element} Vista con buscador y grilla de participantes.
+ */
 export default function ListaPage() {
-  // 1. Traemos los datos del contexto global
   const { participantes, cargando } = useContext(ParticipantesContext);
 
-  // 2. Estado local para los filtros (se queda en la página, no en el contexto)
   const [filtros, setFiltros] = useState({
     texto: "",
     modalidad: "",
     nivel: "",
   });
 
-  // 3. Aplicamos el filtro a la lista
   const listaFiltrada = filtrarParticipantes(participantes, filtros);
 
-  // 4. Lógica de renderizado condicional (Cargando, Vacío, Resultados)
   let contenidoLista;
 
   if (cargando) {
@@ -47,10 +51,8 @@ export default function ListaPage() {
 
   return (
     <div className="flex flex-col gap-2 min-h-screen items-center justify-start bg-white pb-20">
-      {/* Buscador */}
       <Busqueda filtros={filtros} onFiltrar={setFiltros} />
 
-      {/* Listado de Tarjetas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-64 mt-4 max-w-4xl mx-auto w-full px-8">
         {contenidoLista}
       </div>

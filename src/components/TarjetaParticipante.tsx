@@ -4,10 +4,21 @@ import type Participante from "../models/Participante";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Propiedades para la tarjeta del participante.
+ */
 interface PropsTarjeta {
+  /** El objeto participante con toda su información */
   participante: Participante;
 }
 
+/**
+ * Componente que muestra la información resumida de un participante en una tarjeta.
+ * Incluye acciones de edición y eliminación restringidas a administradores.
+ * 
+ * @param {PropsTarjeta} props - Propiedades del componente.
+ * @returns {JSX.Element} Una tarjeta con los datos del participante y botones de acción según el rol.
+ */
 export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
   const { eliminar } = useContext(ParticipantesContext);
   const { user } = useAuth();
@@ -31,7 +42,6 @@ export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
       </p>
       <p className="text-sm text-gray-700">{tecnologias.join(", ")}</p>
 
-      {/* Solo mostramos las acciones si el usuario es ADMIN */}
       {user?.rol === "ADMIN" && (
         <div className="flex gap-2 mt-4">
           <button

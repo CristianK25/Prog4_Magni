@@ -3,17 +3,21 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 import Formulario from "../components/Formulario";
 
+/**
+ * Página de edición de participantes.
+ * 
+ * Recupera el ID del participante desde la URL, lo busca en el contexto global
+ * y lo establece como seleccionado para que el formulario se cargue con sus datos.
+ * 
+ * @returns {JSX.Element} Vista con el formulario en modo edición o mensaje de carga.
+ */
 export default function EditarPage() {
-  // 1. Atrapamos el ID que viene en la URL (/editar/5)
   const { id } = useParams();
   const navigate = useNavigate();
-  // 2. Traemos las herramientas del contexto
   const { participantes, seleccionarParaEdicion, cargando } =
     useContext(ParticipantesContext);
 
-  // 3. Buscamos al participante cuando carga la página o cambia la lista
   useEffect(() => {
-    // Solo buscamos si ya terminó de cargar la lista de la base de datos
     if (!cargando && participantes.length > 0) {
       const p = participantes.find((item) => item.id === Number(id));
       if (p) {
@@ -21,8 +25,6 @@ export default function EditarPage() {
       }
     }
   }, [id, participantes, cargando, seleccionarParaEdicion]);
-
-  // Si la página se refresca y todavía está pidiendo los datos al back, mostramos un aviso
   if (cargando) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -38,7 +40,6 @@ export default function EditarPage() {
   return (
     <div className="flex flex-col gap-2 min-h-screen items-center justify-start bg-white pb-20">
       <div className="w-full">
-        {/* Usamos el fondo amarillo para que pegue con el botón de "Editar" de las tarjetas */}
         <h1 className="text-3xl font-bold text-left mb-6 bg-yellow-500 px-5 py-2 text-white">
           Modificar Participante
         </h1>

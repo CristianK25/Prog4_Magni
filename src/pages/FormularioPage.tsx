@@ -3,12 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 import Formulario from "../components/Formulario";
 
+/**
+ * Página para el registro de nuevos participantes.
+ * 
+ * Asegura que el estado de edición esté limpio al entrar para que el formulario
+ * se muestre vacío y configurado para crear un nuevo registro.
+ * 
+ * @returns {JSX.Element} Vista con el formulario de registro.
+ */
 export default function FormularioPage() {
   const { seleccionarParaEdicion } = useContext(ParticipantesContext);
   const navigate = useNavigate();
 
-  // IMPORTANTE: Al entrar a esta página, "limpiamos" la selección.
-  // Esto garantiza que el formulario arranque vacío y en modo "Registrar".
   useEffect(() => {
     seleccionarParaEdicion(null);
   }, [seleccionarParaEdicion]);
@@ -16,7 +22,6 @@ export default function FormularioPage() {
   return (
     <div className="flex flex-col gap-2 min-h-screen items-center justify-start bg-white pb-20">
       <div className="w-full">
-        {/* Usamos azul acá para diferenciarlo del verde de la lista */}
         <h1 className="text-3xl font-bold text-left mb-6 bg-blue-600 px-5 py-2 text-white">
           Nuevo Participante
         </h1>

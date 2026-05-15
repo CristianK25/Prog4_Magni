@@ -11,15 +11,26 @@ from . import service, schema
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-# Esto le dice a FastAPI de dónde sacar el token en los endpoints protegidos
-# Apunta al endpoint de login (ajustado al prefijo /api que usás en main.py)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
-# --- ENDPOINT DE LOGIN ---
 @router.post("/login", response_model=schema.TokenResponse)
 def login(login_data: schema.LoginRequest, session: Session = Depends(get_session)):
     """
-    Recibe usuario y password, valida y devuelve el JWT + info del usuario.
+    Autentica a un usuario y genera un token de acceso JWT.
+
+    Verifica que el nombre de usuario y la contraseña coincidan con los registros
+    en la base de datos. Si son válidos, devuelve un token Bearer y la información
+    básica del usuario.
+
+    Args:
+        login_data (schema.LoginRequest): Credenciales del usuario.
+        session (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        dict: Diccionario con access_token, token_type y datos del usuario.
+
+    Raises:
+        HTTPException: 401 si las credenciales son inválidas.
     """
     user = service.authenticate_user(login_data, session)
     if not user:
@@ -29,8 +40,7 @@ def login(login_data: schema.LoginRequest, session: Session = Depends(get_sessio
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Creamos el token guardando el 'username' en el campo 'sub' (subject)
-    access_token = create_access_token(data={"sub": user.username})
+        access_token = create_access_token(data={"sub": user.username})
     
     return {
         "access_token": access_token, 
@@ -38,12 +48,23 @@ def login(login_data: schema.LoginRequest, session: Session = Depends(get_sessio
         "user": user
     }
 
-# --- DEPENDENCIAS DE SEGURIDAD ---
 
 def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)):
     """
-    Dependencia para validar el token JWT y devolver el usuario actual.
-    Si el token es inválido o el usuario no existe, tira 401.
+    Valida el token JWT y recupera al usuario actual.
+
+    Esta función actúa como una dependencia que puede ser usada en otros endpoints
+    para asegurar que el usuario esté autenticado.
+
+    Args:
+        token (str): Token Bearer extraído de la cabecera Authorization.
+        session (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        Usuario: El objeto de usuario autenticado.
+
+    Raises:
+        HTTPException: 401 si el token es inválido o el usuario no existe.
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -51,7 +72,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Dep
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        # Decodificamos el token usando nuestra SECRET_KEY
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
@@ -67,7 +87,19 @@ def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Dep
 
 def get_current_admin_user(current_user: schema.UsuarioResponse = Depends(get_current_user)):
     """
-    Dependencia extra que además de validar el token, chequea que el rol sea ADMIN.
+    Verifica que el usuario actual tenga permisos de administrador.
+
+    Dependencia que extiende get_current_user para restringir acceso solo a
+    usuarios con el rol 'ADMIN'.
+
+    Args:
+        current_user (schema.UsuarioResponse): Usuario obtenido de la dependencia previa.
+
+    Returns:
+        schema.UsuarioResponse: El mismo usuario si cumple con el rol.
+
+    Raises:
+        HTTPException: 403 si el usuario no tiene rol de administrador.
     """
     if current_user.rol != "ADMIN":
         raise HTTPException(

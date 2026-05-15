@@ -1,13 +1,13 @@
 import { useState, useContext, useEffect } from "react";
-import type Participante from "../models/Participante";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 
-// 1. BUENA PRÁCTICA: Centralizar el estado inicial fuera del componente.
-// Evitamos repetir este objeto en 3 lugares distintos.
+/**
+ * Estado inicial por defecto para el formulario de participantes.
+ */
 const ESTADO_INICIAL = {
   nombre: "",
   email: "",
-  edad: "", // Se mantiene como string para el control del input
+  edad: "",
   pais: "Argentina",
   modalidad: "",
   tecnologias: [] as string[],
@@ -15,19 +15,35 @@ const ESTADO_INICIAL = {
   aceptaTerminos: false,
 };
 
-export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
+/**
+ * Propiedades para el componente Formulario.
+ */
+interface FormularioProps {
+  /** Callback opcional que se ejecuta tras un registro o edición exitosa */
+  onSuccess?: () => void;
+}
+
+/**
+ * Componente de formulario para la creación y edición de participantes.
+ * 
+ * Gestiona su propio estado interno para los campos de entrada y se sincroniza
+ * con el participante seleccionado del contexto cuando se entra en modo edición.
+ * 
+ * @param {FormularioProps} props - Propiedades del componente.
+ * @returns {JSX.Element} Un formulario completo con validaciones básicas.
+ */
+export default function Formulario({ onSuccess }: FormularioProps) {
   const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } =
     useContext(ParticipantesContext);
 
   // El estado donde tenemos el borrador de nuestro formulario
   const [formData, setFormData] = useState(ESTADO_INICIAL);
 
-  // 2. BUENA PRÁCTICA: Sincronización limpia con el participante seleccionado.
   useEffect(() => {
     if (participanteSeleccionado) {
       setFormData({
         ...participanteSeleccionado,
-        edad: participanteSeleccionado.edad.toString(), // Conversión necesaria para el input
+        edad: participanteSeleccionado.edad.toString(),
       });
     } else {
       setFormData(ESTADO_INICIAL);
@@ -36,6 +52,12 @@ export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
 
   // =============== FUNCIONES ESPECÍFICAS Y CLARAS ===============
 
+  /**
+   * Agrega o quita una tecnología del listado seleccionado.
+   * 
+   * @param {string} tecnologia - Nombre de la tecnología.
+   * @param {boolean} estaChequeado - Estado del checkbox.
+   */
   const manejarTecnologias = (tecnologia: string, estaChequeado: boolean) => {
     setFormData((prev) => ({
       ...prev,
@@ -45,10 +67,15 @@ export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
     }));
   };
 
+  /**
+   * Procesa el envío del formulario para agregar o editar un participante.
+   * Valida que los campos obligatorios estén completos antes de llamar al servicio.
+   * 
+   * @param {React.FormEvent} e - Evento de envío del formulario.
+   */
   const botonRegistrarClickeado = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 3. BUENA PRÁCTICA: Validación más genérica (puedes expandirla después)
     if (
       !formData.nombre ||
       !formData.email ||
@@ -61,7 +88,6 @@ export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
       return;
     }
 
-    // Armamos el paquetito oficial (Ojo: convertimos edad a Number para el backend)
     const participanteArmado = {
       ...formData,
       edad: Number(formData.edad),
@@ -72,13 +98,15 @@ export default function Formulario({ onSuccess }: { onSuccess?: () => void }) {
       seleccionarParaEdicion(null);
     } else {
       await agregar(participanteArmado);
-      setFormData(ESTADO_INICIAL); // Reseteo limpio
+      setFormData(ESTADO_INICIAL);
     }
 
-    // 4. BUENA PRÁCTICA: Inversión de control (el padre decide qué hacer después)
     onSuccess?.();
   };
 
+  /**
+   * Cancela el modo edición y limpia el formulario.
+   */
   const cancelarEdicion = () => {
     seleccionarParaEdicion(null);
   };
