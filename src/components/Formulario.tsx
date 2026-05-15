@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useId } from "react";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 
 /**
@@ -33,6 +33,7 @@ interface FormularioProps {
  * @returns {JSX.Element} Un formulario completo con validaciones básicas.
  */
 export default function Formulario({ onSuccess }: FormularioProps) {
+  const baseId = useId();
   const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } =
     useContext(ParticipantesContext);
 
@@ -133,42 +134,58 @@ export default function Formulario({ onSuccess }: FormularioProps) {
         className="flex flex-col gap-6 border border-gray-200 p-4 shadow-sm rounded"
       >
         <div className="grid grid-cols-2 gap-6 w-full">
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={formData.nombre}
-            onChange={(e) =>
-              setFormData({ ...formData, nombre: e.target.value })
-            }
-            className="w-full border border-gray-300 p-2 rounded shadow-sm"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="w-full border border-gray-300 p-2 rounded shadow-sm"
-          />
-          <input
-            type="number"
-            placeholder="Edad"
-            value={formData.edad}
-            onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
-            className="w-full border border-gray-300 p-2 rounded shadow-sm"
-          />
-          <select
-            value={formData.pais}
-            onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
-            className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
-          >
-            <option value="Argentina">Argentina</option>
-            <option value="Chile">Chile</option>
-            <option value="Uruguay">Uruguay</option>
-            <option value="Mexico">Mexico</option>
-            <option value="España">España</option>
-          </select>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${baseId}-nombre`} className="text-sm font-medium text-gray-600">Nombre</label>
+            <input
+              id={`${baseId}-nombre`}
+              type="text"
+              placeholder="Nombre"
+              value={formData.nombre}
+              onChange={(e) =>
+                setFormData({ ...formData, nombre: e.target.value })
+              }
+              className="w-full border border-gray-300 p-2 rounded shadow-sm"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${baseId}-email`} className="text-sm font-medium text-gray-600">Email</label>
+            <input
+              id={`${baseId}-email`}
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="w-full border border-gray-300 p-2 rounded shadow-sm"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${baseId}-edad`} className="text-sm font-medium text-gray-600">Edad</label>
+            <input
+              id={`${baseId}-edad`}
+              type="number"
+              placeholder="Edad"
+              value={formData.edad}
+              onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
+              className="w-full border border-gray-300 p-2 rounded shadow-sm"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${baseId}-pais`} className="text-sm font-medium text-gray-600">País</label>
+            <select
+              id={`${baseId}-pais`}
+              value={formData.pais}
+              onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
+              className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
+            >
+              <option value="Argentina">Argentina</option>
+              <option value="Chile">Chile</option>
+              <option value="Uruguay">Uruguay</option>
+              <option value="Mexico">Mexico</option>
+              <option value="España">España</option>
+            </select>
+          </div>
         </div>
 
         <div>
@@ -177,9 +194,11 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             {opcionesModalidad.map((opcion) => (
               <label
                 key={opcion.valor}
+                htmlFor={`${baseId}-mod-${opcion.valor}`}
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <input
+                  id={`${baseId}-mod-${opcion.valor}`}
                   type="radio"
                   name="modalidad"
                   value={opcion.valor}
@@ -200,9 +219,11 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             {opcionesTecnologias.map((opcion) => (
               <label
                 key={opcion.valor}
+                htmlFor={`${baseId}-tec-${opcion.valor}`}
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <input
+                  id={`${baseId}-tec-${opcion.valor}`}
                   type="checkbox"
                   checked={formData.tecnologias.includes(opcion.valor)}
                   onChange={(e) =>
@@ -215,19 +236,24 @@ export default function Formulario({ onSuccess }: FormularioProps) {
           </div>
         </div>
 
-        <select
-          value={formData.nivel}
-          onChange={(e) => setFormData({ ...formData, nivel: e.target.value })}
-          className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
-        >
-          <option value="principiante">Principiante</option>
-          <option value="intermedio">Intermedio</option>
-          <option value="avanzado">Avanzado</option>
-        </select>
+        <div className="flex flex-col gap-1">
+          <label htmlFor={`${baseId}-nivel`} className="text-sm font-medium text-gray-600">Nivel</label>
+          <select
+            id={`${baseId}-nivel`}
+            value={formData.nivel}
+            onChange={(e) => setFormData({ ...formData, nivel: e.target.value })}
+            className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
+          >
+            <option value="principiante">Principiante</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="avanzado">Avanzado</option>
+          </select>
+        </div>
 
         <div className="flex gap-4 flex-col mt-4">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label htmlFor={`${baseId}-terminos`} className="flex items-center gap-2 cursor-pointer">
             <input
+              id={`${baseId}-terminos`}
               type="checkbox"
               checked={formData.aceptaTerminos}
               onChange={(e) =>
