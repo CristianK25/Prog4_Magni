@@ -40,7 +40,7 @@ def login(login_data: schema.LoginRequest, session: Session = Depends(get_sessio
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-        access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": user.username})
     
     return {
         "access_token": access_token, 

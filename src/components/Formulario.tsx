@@ -1,5 +1,6 @@
-import { useState, useContext, useEffect, useId, useRef } from "react";
-import { ParticipantesContext } from "../context/ParticipantesContext";
+import { useEffect, useId, useRef } from "react";
+import { useParticipantes } from "../hooks/useParticipante";
+import { useForm } from "../hooks/useForm";
 
 /**
  * Estado inicial por defecto para el formulario de participantes.
@@ -34,11 +35,9 @@ interface FormularioProps {
  */
 export default function Formulario({ onSuccess }: FormularioProps) {
   const baseId = useId();
-  const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } =
-    useContext(ParticipantesContext);
+  const { agregar, editar, participanteSeleccionado, seleccionarParaEdicion } = useParticipantes();
 
-  // El estado donde tenemos el borrador de nuestro formulario
-  const [formData, setFormData] = useState(ESTADO_INICIAL);
+  const { formData, handleChange, resetForm, setValues, setFormData } = useForm(ESTADO_INICIAL);
   
   // Referencia para el foco automático
   const nombreInputRef = useRef<HTMLInputElement>(null);
@@ -50,12 +49,12 @@ export default function Formulario({ onSuccess }: FormularioProps) {
 
   useEffect(() => {
     if (participanteSeleccionado) {
-      setFormData({
+      setValues({
         ...participanteSeleccionado,
         edad: participanteSeleccionado.edad.toString(),
       });
     } else {
-      setFormData(ESTADO_INICIAL);
+      resetForm();
     }
   }, [participanteSeleccionado]);
 
@@ -107,7 +106,7 @@ export default function Formulario({ onSuccess }: FormularioProps) {
       seleccionarParaEdicion(null);
     } else {
       await agregar(participanteArmado);
-      setFormData(ESTADO_INICIAL);
+      resetForm();
     }
 
     onSuccess?.();
@@ -147,12 +146,11 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             <input
               id={`${baseId}-nombre`}
               ref={nombreInputRef}
+              name="nombre"
               type="text"
               placeholder="Nombre"
               value={formData.nombre}
-              onChange={(e) =>
-                setFormData({ ...formData, nombre: e.target.value })
-              }
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded shadow-sm"
             />
           </div>
@@ -160,12 +158,11 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             <label htmlFor={`${baseId}-email`} className="text-sm font-medium text-gray-600">Email</label>
             <input
               id={`${baseId}-email`}
+              name="email"
               type="email"
               placeholder="Email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded shadow-sm"
             />
           </div>
@@ -173,10 +170,11 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             <label htmlFor={`${baseId}-edad`} className="text-sm font-medium text-gray-600">Edad</label>
             <input
               id={`${baseId}-edad`}
+              name="edad"
               type="number"
               placeholder="Edad"
               value={formData.edad}
-              onChange={(e) => setFormData({ ...formData, edad: e.target.value })}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded shadow-sm"
             />
           </div>
@@ -184,8 +182,9 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             <label htmlFor={`${baseId}-pais`} className="text-sm font-medium text-gray-600">País</label>
             <select
               id={`${baseId}-pais`}
+              name="pais"
               value={formData.pais}
-              onChange={(e) => setFormData({ ...formData, pais: e.target.value })}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
             >
               <option value="Argentina">Argentina</option>
@@ -212,9 +211,7 @@ export default function Formulario({ onSuccess }: FormularioProps) {
                   name="modalidad"
                   value={opcion.valor}
                   checked={formData.modalidad === opcion.valor}
-                  onChange={(e) =>
-                    setFormData({ ...formData, modalidad: e.target.value })
-                  }
+                  onChange={handleChange}
                 />
                 {opcion.etiqueta}
               </label>
@@ -249,8 +246,9 @@ export default function Formulario({ onSuccess }: FormularioProps) {
           <label htmlFor={`${baseId}-nivel`} className="text-sm font-medium text-gray-600">Nivel</label>
           <select
             id={`${baseId}-nivel`}
+            name="nivel"
             value={formData.nivel}
-            onChange={(e) => setFormData({ ...formData, nivel: e.target.value })}
+            onChange={handleChange}
             className="w-full border border-gray-300 p-2 rounded shadow-sm bg-white"
           >
             <option value="principiante">Principiante</option>
@@ -263,11 +261,10 @@ export default function Formulario({ onSuccess }: FormularioProps) {
           <label htmlFor={`${baseId}-terminos`} className="flex items-center gap-2 cursor-pointer">
             <input
               id={`${baseId}-terminos`}
+              name="aceptaTerminos"
               type="checkbox"
               checked={formData.aceptaTerminos}
-              onChange={(e) =>
-                setFormData({ ...formData, aceptaTerminos: e.target.checked })
-              }
+              onChange={handleChange}
             />
             Acepto términos y condiciones
           </label>
