@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { FiltrosBusqueda } from "../utils/filtros";
 
 /**
@@ -17,6 +18,24 @@ interface BusquedaProps {
  * @returns {JSX.Element} Un contenedor con inputs y selects para filtrar participantes.
  */
 export default function Busqueda({ filtros, onFiltrar }: BusquedaProps) {
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const manejarAtajo = (e: KeyboardEvent) => {
+      // Si presiona Ctrl + B, enfocamos el buscador
+      if (e.ctrlKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", manejarAtajo);
+    
+    // Limpieza al desmontar el componente
+    return () => {
+      window.removeEventListener("keydown", manejarAtajo);
+    };
+  }, []);
   /**
    * Resetea todos los filtros a su estado inicial vacío.
    */
@@ -31,6 +50,7 @@ export default function Busqueda({ filtros, onFiltrar }: BusquedaProps) {
   return (
     <div className="grid grid-cols-[1fr_1fr_1fr_auto] items-center m-4 mb-6 gap-2 w-full max-w-4xl mx-auto px-8 mt-8 border border-gray-200 p-4 shadow-sm rounded bg-gray-50">
       <input
+        ref={searchRef}
         type="text"
         placeholder="Buscar por nombre..."
         value={filtros.texto}

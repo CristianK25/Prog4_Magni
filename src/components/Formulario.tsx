@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useId } from "react";
+import { useState, useContext, useEffect, useId, useRef } from "react";
 import { ParticipantesContext } from "../context/ParticipantesContext";
 
 /**
@@ -39,6 +39,14 @@ export default function Formulario({ onSuccess }: FormularioProps) {
 
   // El estado donde tenemos el borrador de nuestro formulario
   const [formData, setFormData] = useState(ESTADO_INICIAL);
+  
+  // Referencia para el foco automático
+  const nombreInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Al cargar el formulario, el foco va directo al campo nombre
+    nombreInputRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     if (participanteSeleccionado) {
@@ -138,6 +146,7 @@ export default function Formulario({ onSuccess }: FormularioProps) {
             <label htmlFor={`${baseId}-nombre`} className="text-sm font-medium text-gray-600">Nombre</label>
             <input
               id={`${baseId}-nombre`}
+              ref={nombreInputRef}
               type="text"
               placeholder="Nombre"
               value={formData.nombre}
