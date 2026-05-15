@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import type Participante from "../models/Participante";
 import { ParticipantesContext } from "../context/ParticipantesContext";
+import { useAuth } from "../context/AuthContext";
 
 interface PropsTarjeta {
   participante: Participante;
@@ -9,6 +10,7 @@ interface PropsTarjeta {
 
 export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
   const { eliminar } = useContext(ParticipantesContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const { id, nombre, pais, modalidad, nivel, tecnologias } = participante;
@@ -29,20 +31,23 @@ export default function TarjetaParticipantes({ participante }: PropsTarjeta) {
       </p>
       <p className="text-sm text-gray-700">{tecnologias.join(", ")}</p>
 
-      <div className="flex gap-2 mt-4">
-        <button
-          onClick={() => navigate(`/editar/${id}`)}
-          className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600 transition"
-        >
-          Editar
-        </button>
-        <button
-          onClick={() => eliminar(id)}
-          className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 transition"
-        >
-          Eliminar
-        </button>
-      </div>
+      {/* Solo mostramos las acciones si el usuario es ADMIN */}
+      {user?.rol === "ADMIN" && (
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => navigate(`/editar/${id}`)}
+            className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600 transition"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => eliminar(id)}
+            className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 transition"
+          >
+            Eliminar
+          </button>
+        </div>
+      )}
     </div>
   );
 }

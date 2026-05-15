@@ -4,12 +4,15 @@ from contextlib import asynccontextmanager
 
 from app.core.database import create_db_and_tables
 from app.modules.participante.router import router as participante_router
-
+from app.modules.usuarios.router import router as usuarios_router
+from app.modules.usuarios.model import Usuario
+from seed import seed_users
 # Esto es un "lifespan", se ejecuta una única vez al prender el servidor.
 # Es ideal para decirle a la BD "creame las tablas si no existen".
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
+    seed_users()
     yield
     # Acá iría código al apagar el server si hiciera falta.
 
@@ -24,14 +27,15 @@ origenes_permitidos = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origenes_permitidos,
-    allow_credentials=True,
-    allow_methods=["*"], # Permitimos GET, POST, DELETE...
-    allow_headers=["*"], # Permitimos cualquier tipo de Header (JSON, Text, etc)
+    allow_origins=["*"], # Permitimos cualquier origen (localhost, IPs de red, etc)
+    allow_credentials=False, # Como usamos JWT en headers (y no cookies), esto va en False
+    allow_methods=["*"], # Permitimos GET, POST, DELETE, OPTIONS, etc
+    allow_headers=["*"], # Permitimos cualquier tipo de Header (JSON, Text, Authorization)
 )
 
 # Enchufamos la zapatilla de los endpoints con el prefijo /api
 app.include_router(participante_router, prefix="/api")
+app.include_router(usuarios_router, prefix="/api")
 
 @app.get("/")
 def home():

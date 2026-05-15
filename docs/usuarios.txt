@@ -1,0 +1,9 @@
+USUARIO ADMIN:
+
+    USUARIO: admin
+    CONTRASEÑA: admin123
+
+USUARIO Consulta:
+
+    USUARIO: consulta
+    CONTRASEÑA: consulta123
